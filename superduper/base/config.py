@@ -88,7 +88,7 @@ class PollingStrategy(CDCStrategy):
     :param type: The type of CDC strategy
     """
 
-    auto_increment_field: t.Optional[str] = None
+    auto_increment_field: str = 'i'
     frequency: str = '30'
     type: str = 'incremental'
 

@@ -8,6 +8,7 @@ import pandas
 from pandas.core.frame import DataFrame
 from sqlalchemy.exc import NoSuchTableError
 
+from superduper import CFG
 from superduper.backends.base.data_backend import BaseDataBackend
 from superduper.backends.base.metadata import MetaDataStoreProxy
 from superduper.backends.ibis.db_helper import get_db_helper
@@ -131,7 +132,9 @@ class IbisDataBackend(BaseDataBackend):
 
     def drop_outputs(self):
         """Drop the outputs."""
-        raise NotImplementedError
+        for table in self.conn.list_tables():
+            if table.startswith('_outputs__'):
+                self.conn.drop_table(table)
 
     def drop_table_or_collection(self, name: str):
         """Drop the table or collection.
@@ -164,10 +167,14 @@ class IbisDataBackend(BaseDataBackend):
         else:
             output_type = datatype
 
+        assert isinstance(CFG.cluster.cdc.strategy, dict)
+        to_inc = CFG.cluster.cdc.strategy['auto_increment_field']
+
         fields = {
             INPUT_KEY: dtype('string'),
             'id': dtype('string'),
             f'_outputs__{predict_id}': output_type,
+            to_inc: dtype('int64'),
         }
         return Table(
             identifier=f'_outputs__{predict_id}',
@@ -210,9 +217,8 @@ class IbisDataBackend(BaseDataBackend):
 
         :param force: Whether to force the drop.
         """
-        raise NotImplementedError(
-            "Dropping tables needs to be done in each DB natively"
-        )
+        for table in self.conn.list_tables():
+            self.conn.drop_table(table)
 
     def get_table_or_collection(self, identifier):
         """Get a table or collection from the database.

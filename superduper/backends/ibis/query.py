@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import pandas
 
-from superduper import Document
+from superduper import CFG, Document
 from superduper.backends.base.query import (
     Query,
     applies_to,
@@ -79,6 +79,11 @@ def _model_update_impl(
     if not outputs:
         return
 
+    table_name = f'_outputs__{predict_id}'
+    assert isinstance(CFG.cluster.cdc.strategy, dict)
+    to_inc = CFG.cluster.cdc.strategy['auto_increment_field']
+    table = db.databackend.conn.table(table_name)
+    last_increment = int(table[to_inc].max().execute() or 0)
     documents = []
     for output, source_id in zip(outputs, ids):
         d = {
@@ -87,6 +92,7 @@ def _model_update_impl(
             if isinstance(output, Encodable)
             else output,
             'id': str(uuid.uuid4()),
+            to_inc: last_increment + 1,
         }
         documents.append(Document(d))
     return db[f'_outputs__{predict_id}'].insert(documents)

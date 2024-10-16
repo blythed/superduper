@@ -188,3 +188,28 @@ def test_cross_reference(db):
     import pprint
 
     pprint.pprint(r)
+
+
+def test_export_with_artifact():
+
+    m = ObjectModel(
+        object=lambda x: x + 2,
+        identifier='my_id',
+        example='<var:example>'
+    )
+
+    template = Template(
+        'my-template',
+        template=m
+    )
+
+    template.export('/tmp/my-template')
+
+    t = Template.read('/tmp/my-template')
+
+    c = t()
+
+    import pdb; pdb.set_trace()
+
+
+

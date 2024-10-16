@@ -489,7 +489,7 @@ class Datalayer:
             if j.dependencies:
                 logging.info(
                     f'[{i}]: {j.huuid}: {j.method} ~ '
-                    f'[{",".join([steps[d] for d in j.dependencies])}]'
+                    f'[{",".join(sorted(list(set([steps[d] for d in j.dependencies]))))}]'
                 )
             else:
                 logging.info(f'[{i}]: {j.huuid}: {j.method}')

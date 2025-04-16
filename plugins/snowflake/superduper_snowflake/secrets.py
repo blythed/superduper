@@ -6,10 +6,14 @@ from superduper.base.exceptions import MissingSecretsException
 
 
 class UpdatingSecretException(Exception):
-    ...
+    """Exception raised when secrets are still updating."""
 
 
 def check_secret_updates(db):
+    """Check if secrets are updated in Snowflake.
+
+    :param db: The database connection object.
+    """
     result = db.databackend.raw_sql("CALL v1.wrapper('SHOW SECRETS IN ADMIN')")
 
     lookup = {r[1]: json.loads(r[5])['status']['hash'] for r in result}

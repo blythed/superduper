@@ -41,6 +41,7 @@ dependencies = [
     "requests>=2.22",  # lower bound from openai and boto3
     "tqdm>=4.64.1",
     "typer>=0.7.0",
+    "pandas",
     "pydantic>=1",
     "pygments",
     "numpy>=1.24.3",
@@ -66,7 +67,6 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "scikit-learn>=1.1.3",
-    "pandas",
     "pre-commit",
     "black==25.1.0",
     "ruff==0.4.4",

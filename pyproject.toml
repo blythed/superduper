@@ -11,7 +11,6 @@ license = {file = "LICENSE"}
 maintainers = [{name = "superduper.io, Inc.", email = "opensource@superduper.com"}]
 keywords = [
     "databases",
-    "mongodb",
     "data-science",
     "machine-learning",
     "mlops",

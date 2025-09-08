@@ -37,7 +37,7 @@ class Table(Component):
         if self.identifier in REGISTRY:
             self.cls = REGISTRY[self.identifier]
             self.schema = self.cls.class_schema
-            self.fields = self.cls._new_fields
+            self.fields = self.cls.class_fields
         else:
             self.schema = Schema.build(**self.fields)
             self.cls = None

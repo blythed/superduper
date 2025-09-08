@@ -21,11 +21,11 @@ def test_hash_item():
 
     assert c1.hash != c3.hash
 
-    assert c1.get_merkle_tree(False)['b'] != c3.get_merkle_tree(False)['b']
+    assert c1.merkle_tree['b'] != c3.merkle_tree['b']
 
-    for k in c1.get_merkle_tree(False):
+    for k in c1.merkle_tree:
         if k == 'b':
             continue
         assert (
-            c1.get_merkle_tree(False)[k] == c3.get_merkle_tree(False)[k]
+            c1.merkle_tree[k] == c3.merkle_tree[k]
         ), 'Trees differed at key: {}'.format(k)

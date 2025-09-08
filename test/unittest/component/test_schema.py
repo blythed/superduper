@@ -27,20 +27,20 @@ class TestUnannotatedComponent(Component):
 def test_schema_with_bytes_encoding(db):
     db.apply(
         Table(
-            'documents',
+            'documentz',
             fields={'txt': 'pickleencoder'},
         )
     )
 
-    db['documents'].insert([{'txt': 'testing 123'}])
+    db['documentz'].insert([{'txt': 'testing 123'}])
 
-    r = db.databackend.db['documents'].get()
+    r = db.databackend.db['documentz'].get()
 
     print(r)
 
     assert isinstance(r['txt'], str)
 
-    r = db['documents'].get()
+    r = db['documentz'].get()
 
 
 def test_schema_with_blobs(db):

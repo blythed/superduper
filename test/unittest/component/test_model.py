@@ -28,7 +28,6 @@ from superduper.misc import typing as st  # noqa: F401
 # ------------------------------------------
 # Test the _TrainingConfiguration class (tc)
 # ------------------------------------------
-@dc.dataclass
 class Validator(ObjectModel): ...
 
 
@@ -269,7 +268,7 @@ def test_model_fit(db):
 
     model = Validator(
         'test',
-        object=object(),
+        object=lambda x: x,
         trainer=MyNewTrainer(
             'my-trainer', key='x', select=db['documentz'].select(), db=db
         ),

@@ -65,6 +65,7 @@ def build_vector_index(
     compatible_model = ObjectModel(
         identifier="model-y",
         object=lambda y: predict(-y),
+        datatype=f'vector[int:{VECTOR_SIZE}]',
     )
 
     compatible_listener = Listener(

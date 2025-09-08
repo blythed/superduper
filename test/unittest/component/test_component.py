@@ -226,13 +226,16 @@ class MyClass:
 
         return numpy.random.randn(20)
 
+    def __call__(self, x):
+        return self.predict(x)
+
 
 def test_calls_post_init():
     t = Table('test', fields={'x': 'str'})
     assert hasattr(t, 'version')
 
 
-def my_func(x):
+def my_func(x) -> int:
     return x + 1
 
 
@@ -298,6 +301,7 @@ def test_propagate_failure(db):
     m = ObjectModel(
         identifier='model',
         object=my_func,
+        datatype='int',
     )
 
     listener = Listener(

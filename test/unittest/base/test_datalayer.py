@@ -68,6 +68,7 @@ def add_fake_model(db: Datalayer):
     model = ObjectModel(
         object=lambda x: str(x),
         identifier='fake_model',
+        datatype='str',
     )
 
     select = db['documentz'].select()

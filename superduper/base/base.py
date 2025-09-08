@@ -66,6 +66,7 @@ class _UniqueRegistry:
         return f'_UniqueRegistry({self.d})'
 
 
+# TODO - move this logic to `Component`, which is where the classes should be
 REGISTRY = _UniqueRegistry({})
 
 
@@ -137,7 +138,7 @@ class Base(metaclass=BaseMeta):
 
     verbosity: t.ClassVar[int] = 0
     primary_id: t.ClassVar[str] = 'uuid'
-    metadata_fields: t.ClassVar[t.Dict[str, str]] = {'_path': 'str'}
+    metadata_fields: t.ClassVar[t.Dict] = {'_path': str}
 
     def __init_subclass__(cls):
         full_path = f"{cls.__module__}.{cls.__name__}"
@@ -159,7 +160,14 @@ class Base(metaclass=BaseMeta):
         return super().__init_subclass__()
 
     @lazy_classproperty
-    def _new_fields(cls):
+    def parameters(cls):
+        """Get parameters of the class."""
+        return {
+            k: v for k, v in cls.class_fields.items() if k not in cls.metadata_fields
+        }
+
+    @lazy_classproperty
+    def class_fields(cls):
         """Get the schema of the class."""
         from superduper.misc.schema import get_schema
 
@@ -194,7 +202,7 @@ class Base(metaclass=BaseMeta):
         from superduper.base.datatype import INBUILT_DATATYPES
         from superduper.base.schema import Schema
 
-        named_fields = cls._new_fields
+        named_fields = cls.class_fields
         for f in named_fields:
             fields[f] = INBUILT_DATATYPES[named_fields[f]]
 
@@ -346,10 +354,7 @@ class Base(metaclass=BaseMeta):
         """
         from superduper.base.document import Document
 
-        if 'component' in r and r['component'] in REGISTRY:
-            cls = REGISTRY[r['component']]
-        elif '_path' in r:
-            cls = cls.get_cls_from_path(r['_path'])
+        cls = cls.get_cls_from_path(r['_path'])
 
         r = Document.decode(r, schema=cls.class_schema, db=db)
         return cls.from_dict(r, db=db)
@@ -493,15 +498,10 @@ class Base(metaclass=BaseMeta):
 
         r = asdict(self)
         if metadata:
-            metadata = getattr(self, 'metadata', {})
-            for k, v in metadata.items():
+            for k, v in self.metadata.items():
                 r[k] = v
         else:
-            for k in list(r.keys()):
-                if k in getattr(self, 'metadata_fields', {}):
-                    if k in r:
-                        del r[k]
-
+            r['_path'] = self._path
         return Document(r, schema=self.class_schema)
 
     @classmethod

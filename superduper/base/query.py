@@ -800,6 +800,10 @@ class Query(_BaseQuery):
         return self + Op(op, args=(other,), kwargs={}, symbol=SYMBOLS[op])
 
     def __eq__(self, other):
+        if other is None:
+            return False
+        if not self.parts or not isinstance(self.parts[-1], str):
+            return self.dict() == other.dict()
         return self._ops('__eq__', other)
 
     def __ne__(self, other):
@@ -1097,7 +1101,7 @@ def parse_query(
     query: t.Union[str, list],
     documents: t.Sequence[t.Any] = (),
     db: t.Optional['Datalayer'] = None,
-    _path : str = None,
+    _path: str = None,
 ):
     """Parse a string query into a query object.
 

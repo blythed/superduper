@@ -13,8 +13,8 @@ def new_func(x):
 
 def test_annotations(db):
 
-    assert MyComponentTyping._new_fields['path'] == 'file'
-    assert MyComponentTyping._new_fields['my_func'] == 'dill'
+    assert MyComponentTyping.class_fields['path'] == 'file'
+    assert MyComponentTyping.class_fields['my_func'] == 'dill'
 
     import tempfile
 

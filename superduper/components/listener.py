@@ -35,7 +35,7 @@ class Listener(CDC):
     breaks: t.ClassVar[t.Sequence[str]] = ('model', 'key', 'select')
     metadata_fields: t.ClassVar[t.Dict[str, t.Type]] = {'output_table': Table}
 
-    key: st.JSON
+    key: t.Union[t.Dict, t.List, str, int]
     model: Model
     predict_kwargs: t.Optional[t.Dict] = dc.field(default_factory=dict)
     select: t.Optional[Query] = None
@@ -45,6 +45,9 @@ class Listener(CDC):
     def postinit(self):
         """Post initialization method."""
         super().postinit()
+        assert (
+            self.model.datatype is not None
+        ), 'Model must have a datatype for a `Listener`'
         if not self.cdc_table and self.select:
             self.cdc_table = self.select.table
         if isinstance(self.key, tuple):

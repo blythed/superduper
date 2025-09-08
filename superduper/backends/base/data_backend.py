@@ -8,8 +8,8 @@ from abc import ABC, abstractmethod
 
 from superduper import CFG, logging
 from superduper.base import exceptions
-from superduper.base.constant import KEY_BLOBS, KEY_BUILDS, KEY_FILES, KEY_PATH
-from superduper.base.datatype import JSON, BaseDataType, NativeVector, Vector
+from superduper.base.constant import KEY_BLOBS, KEY_BUILDS, KEY_FILES
+from superduper.base.datatype import NativeVector, Vector
 from superduper.base.document import Document
 from superduper.base.query import Query
 
@@ -966,8 +966,15 @@ class KeyedDatabackend(BaseDataBackend):
                 keys = self.keys(query.table, '*', '*', '*')
                 docs = [self[k] for k in keys]
             elif set(filter_kwargs.keys()) == {'uuid'}:
-                keys = self.keys(query.table, '*', '*', filter_kwargs['uuid']['value'])
-                docs = [self[k] for k in keys]
+                if filter_kwargs['uuid']['op'] != '==':
+                    keys = self.keys(
+                        query.table, '*', '*', filter_kwargs['uuid']['value']
+                    )
+                    docs = [self[k] for k in keys]
+                else:
+                    raise NotImplementedError(
+                        "KeyedDatabackend only supports equality filtering on uuid."
+                    )
             elif set(filter_kwargs.keys()) == {'identifier'}:
                 assert filter_kwargs['identifier']['op'] == '=='
                 keys = self.keys(query.table, filter_kwargs['identifier']['value'], '*')

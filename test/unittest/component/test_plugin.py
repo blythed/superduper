@@ -70,6 +70,7 @@ def create_import_plugin(tempdirname, component):
         "identifier": "plugin",
         "component": "Plugin",
         "path": "&:file:p_import:file_id",
+        "_path": "superduper.components.plugin.Plugin",
     }
     os.makedirs(import_path)
     write_path(os.path.join(import_path, "component.json"), json.dumps(component_dict))
